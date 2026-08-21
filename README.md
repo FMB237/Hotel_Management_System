@@ -15,4 +15,10 @@
 12. Let launch our backend server 
 13. Since i have set up a simple hotel.db then move to pydantic schemas
 14. For this we create a user.py file into our schemas folder 
-15. But let initialise our repo first before moving forward
+15. But let initialise our repo first before moving forward 
+16. Then fill the user.py with all our user schemas for our app 
+17. Now that we have good user schemas we can user move the some app security that is hashing the user passwords into our db 
+18. From that let move to the utils folder and create a file with name security.py for this work 
+19. Now let move to the Routes where our first route is the handle authentification in our app
+20. move to the routes folder and create a file with name auth.py 
+21. Move to our main.py file and import the router as **auth_router**
