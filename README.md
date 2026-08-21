@@ -22,3 +22,7 @@
 19. Now let move to the Routes where our first route is the handle authentification in our app
 20. move to the routes folder and create a file with name auth.py 
 21. Move to our main.py file and import the router as **auth_router**
+22. Now that this is set up we can move to used of the JWT token implementation 
+23. Let stay inside our backend move to the utils folder and create a file with name jwt.py for handling jwt token and user sessions
+24. Let return to the auth.py file and update the login function  and create a Secure route for testing 
+25. 

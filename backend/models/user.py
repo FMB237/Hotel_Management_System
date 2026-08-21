@@ -10,7 +10,7 @@ class User(Base):
 
     id = Column(Integer,unique=True,index=True,primary_key=True)
     full_name = Column(String,nullable=False)
-    email = Column(String,unique=True,nullable=True)
+    email = Column(String,unique=True,nullable=False)
     password_hash = Column(String,nullable=False)
     role = Column(String,default="student")
     profile_picture = Column(String,nullable=True)
