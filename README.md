@@ -25,4 +25,8 @@
 22. Now that this is set up we can move to used of the JWT token implementation 
 23. Let stay inside our backend move to the utils folder and create a file with name jwt.py for handling jwt token and user sessions
 24. Let return to the auth.py file and update the login function  and create a Secure route for testing 
-25. 
+25. Let now move to the building of the main Database Cores of our app.
+26. Let Create the Room model for that we just move to the backend folder then to models and  create the room.py 
+27. Now let also create the complaints model that we handle tickeking system this will be done inside the same models folder
+28. Now we just make the updates to the main.py to file 
+29. 
