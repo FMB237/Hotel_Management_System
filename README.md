@@ -29,4 +29,9 @@
 26. Let Create the Room model for that we just move to the backend folder then to models and  create the room.py 
 27. Now let also create the complaints model that we handle tickeking system this will be done inside the same models folder
 28. Now we just make the updates to the main.py to file 
-29. 
+29. Since we are still in the morning we gonna go fast by defining the schemas of our application 
+30. To start let define the schemas of Our room so let moveto the schemas folder and create a room.py file 
+31. Let also create the complaint.py schemas 
+32. Now we can move to the routes folder to create the room and complaints routes files 
+33. Let also update than main.py with the new routes
+34. 
