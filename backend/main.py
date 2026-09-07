@@ -13,6 +13,7 @@ import models.complaint
 from routes.auth import router as auth_router
 from routes.room import router as room_router
 from routes.complaint import router as complaint_router
+from routes.users import router as user_router
 
 
 
@@ -24,6 +25,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth_router)
 app.include_router(room_router)
 app.include_router(complaint_router)
+app.include_router(user_router)
 
 @app.get("/")
 def home():

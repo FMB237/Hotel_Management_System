@@ -1,11 +1,12 @@
 # Routes for Complaint 
-from fastapi import FastAPI,APIRouter,Depends,HTTPException
+from fastapi import FastAPI,APIRouter,Depends,HTTPException,UploadFile,File
 from sqlalchemy.orm import Session
 from database import get_db
 from models.complaint import Complaint,ComplaintStatus,PriorityLevel
 from schemas.complaint import ComplaintCreate,ComplaintUpdate,ComplaintResponse,ComplaintStatus
 from utils.jwt import get_current_user
 from models.user import User
+
 
 router = APIRouter(prefix="/compaints",tags=["Complaints"])
 
@@ -43,3 +44,18 @@ def update_complaint(complaint_id:int, update_date:ComplaintUpdate, db:Session =
     db.commit()
     db.refresh(complaint)
     return complaint   
+
+ # Let add the route for uploading the images 
+@router.post("/{complaint_id}/upload-proof")
+def upload_complaint_proof(complaint_id:int,file:UploadFile = File(...),db:Session = Depends(get_db),current_user:User = Depends(get_current_user)):
+
+    complaint = db.query(Complaint).filter(Complaint.id == complaint_id,Complaint.user_id == current_user.id).first()
+    if not complaint:
+        raise HTTPException(status_code=404,detail="Complaint not found")
+    file_path = save_upload_file(file,folder="complaints")
+
+    compaint.proof_image = file_path
+    db.commit()
+    db.refresh(complaint)
+
+    return {"message":"Proof images upload successfully","image_path":file_path}

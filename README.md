@@ -34,4 +34,9 @@
 31. Let also create the complaint.py schemas 
 32. Now we can move to the routes folder to create the room and complaints routes files 
 33. Let also update than main.py with the new routes
-34. 
+34. I been a long time since i havn't worked on this on this project 
+35. I mainly ended at the level of the file handling utils in the project
+36. Now let move on to the room/complaint.py  and add a new route at the bottom
+37. Let create our User Profile routes mainly for managing the users and redirecing them into our app 
+38. Then go back and update the main.py file 
+39. 
