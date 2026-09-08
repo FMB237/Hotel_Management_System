@@ -2,3 +2,4 @@
 hostel.db
 __pycache__
 uploads 
+.env

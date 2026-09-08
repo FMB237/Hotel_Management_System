@@ -47,3 +47,7 @@
 44. Now let move on the dashboard phase of the project where we gonna display our data 
 45. Let create and schemas and route for that 
 46. The dashbaord.py is the only file that i haven't read here
+47. Now let start talking abou the deployment face that is mainly 
+48. Updating the requirements.txt file to a minimal version 
+49. Now that we have done that we can move to the pre-deployement state and let just create a .env file and a simple .env.example file 
+50. add the .env file into the .ignore folder 

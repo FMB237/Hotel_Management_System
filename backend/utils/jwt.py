@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from fastapi import Depends, HTTPException, status
@@ -7,7 +9,10 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models.user import User
 
-SECRET_KEY = "super-secret-key-for-internship-2026" 
+"""Let load our environment variables""" 
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY","fallback_secret_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 
