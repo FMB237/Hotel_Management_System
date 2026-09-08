@@ -8,12 +8,14 @@ from models.user import User
 import models.user
 import models.room
 import models.complaint
+import models.notice
 
 # Let import our routes 
 from routes.auth import router as auth_router
 from routes.room import router as room_router
 from routes.complaint import router as complaint_router
 from routes.users import router as user_router
+from routes.notice import router as notice_router
 
 
 
@@ -26,7 +28,7 @@ app.include_router(auth_router)
 app.include_router(room_router)
 app.include_router(complaint_router)
 app.include_router(user_router)
-
+app.include_router(notice_router)
 @app.get("/")
 def home():
     return {

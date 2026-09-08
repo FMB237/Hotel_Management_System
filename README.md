@@ -39,4 +39,8 @@
 36. Now let move on to the room/complaint.py  and add a new route at the bottom
 37. Let create our User Profile routes mainly for managing the users and redirecing them into our app 
 38. Then go back and update the main.py file 
-39. 
+39. Let move on the Notice and Annoument Modules
+40. This is mainly a bonus feature and mainly a feature where will implented **Role-Based Access Control** and then we will make such that only admin can create,read,update and delect students 
+41. For this we gonna move to model folder and create a new models and call it notice.py and 
+42. Then also so that same for the schemas folder and also create a notice.py file for using pydantic with it 
+43. Move to the routes folder and also create the notice.py file for the routes and inside add a simple CRUD
