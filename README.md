@@ -44,3 +44,6 @@
 41. For this we gonna move to model folder and create a new models and call it notice.py and 
 42. Then also so that same for the schemas folder and also create a notice.py file for using pydantic with it 
 43. Move to the routes folder and also create the notice.py file for the routes and inside add a simple CRUD
+44. Now let move on the dashboard phase of the project where we gonna display our data 
+45. Let create and schemas and route for that 
+46. The dashbaord.py is the only file that i haven't read here

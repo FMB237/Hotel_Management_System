@@ -16,7 +16,7 @@ from routes.room import router as room_router
 from routes.complaint import router as complaint_router
 from routes.users import router as user_router
 from routes.notice import router as notice_router
-
+from routes.dashboard import router as dashboard_router
 
 
 app=FastAPI(title="Hotel_Management_System",version="1.0.0")
@@ -29,6 +29,8 @@ app.include_router(room_router)
 app.include_router(complaint_router)
 app.include_router(user_router)
 app.include_router(notice_router)
+app.include_router(dashboard_router)
+
 @app.get("/")
 def home():
     return {
