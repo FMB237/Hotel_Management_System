@@ -50,4 +50,7 @@
 47. Now let start talking abou the deployment face that is mainly 
 48. Updating the requirements.txt file to a minimal version 
 49. Now that we have done that we can move to the pre-deployement state and let just create a .env file and a simple .env.example file 
-50. add the .env file into the .ignore folder 
+50. add the .env file into the .ignore file and also update this file 
+51. Then add  a Procfile  to tell the server how he is going to launch the app since we gonna deploy the  backend first in this project 
+52. Since we have to deploy and not from the whole app we will just move the requirements.txt file into the backend folder and make the backend as a service on render using the backend folder as root hein  also add the Procfile inside the backend folder instead
+53. 
