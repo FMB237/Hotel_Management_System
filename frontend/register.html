@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="register.css">
+    <title>Smart Hostel - Register</title>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Create an Account</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" placeholder="Miguel Bruce" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="student@university.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Create a strong password" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Account Type</label>
+                <select id="role" required>
+                    <option value="student">Student</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Register</button>
+            <div id="message" class="message"></div>
+        </form>
+        <div class="link">
+            Already have an account? <a href="index.html">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://hotel-management-system-pd7b.onrender.com";
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Stop page reload
+            
+            const fullName = document.getElementById('full_name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            
+            const messageDiv = document.getElementById('message');
+            const submitBtn = document.querySelector('.btn');
+
+            // UI Loading State
+            messageDiv.textContent = "Creating account...";
+            messageDiv.className = "message";
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = "0.7";
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        full_name: fullName,
+                        email: email,
+                        password: password,
+                        role: role
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // SUCCESS!
+                    messageDiv.textContent = "Registration successful! Redirecting to login...";
+                    messageDiv.className = "message success";
+                    
+                    // Redirect to login page after 1.5 seconds
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+
+                } else {
+                    // ERROR (e.g., Email already registered)
+                    messageDiv.textContent = data.detail || "Registration failed";
+                    messageDiv.className = "message error";
+                }
+
+            } catch (error) {
+                messageDiv.textContent = "Network error. Please try again.";
+                messageDiv.className = "message error";
+                console.error("Register Error:", error);
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "1";
+            }
+        });
+    </script>
+</body>
+</html>
