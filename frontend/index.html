@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Smart Hostel Login</h2>
+        <form id="loginForm" action="">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" name="" id="email"  placeholder="student@university.com" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="" id="password"  placeholder="Enter your password" required> 
+          </div>
+        <button type="submit" class="btn">Login</button>
+        <div class="message" id = "message"></div>
+        </form>
+        <div class="link">
+             Don't have an account? <a href="register.html">Register here</a>
+        </div>
+    </div>
+        <script>
+        // Your live API URL
+        const API_URL = "https://hotel-management-system-pd7b.onrender.com";
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Stop the page from reloading
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+            const submitBtn = document.querySelector('.btn');
+
+            // UI Loading State
+            messageDiv.textContent = "Connecting to API...";
+            messageDiv.className = "message";
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = "0.7";
+
+            try {
+                // Send POST request to FastAPI
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    //  SUCCESS! Save the JWT token and user role in the browser
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('role', data.role);
+                    localStorage.setItem('userId', data.user_id);
+
+                    messageDiv.textContent = "Login successful! Redirecting...";
+                    messageDiv.className = "message success";
+
+                    // Redirect to dashboard after 1 second
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+
+                } else {
+                    // ❌ ERROR (Wrong password or email not found)
+                    messageDiv.textContent = data.detail || "Login failed";
+                    messageDiv.className = "message error";
+                }
+
+            } catch (error) {
+                // Network error (e.g., Render server is sleeping)
+                messageDiv.textContent = "Network error. Please try again.";
+                messageDiv.className = "message error";
+                console.error("Login Error:", error);
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "1";
+            }
+        });
+    </script>
+</body>
+</html>

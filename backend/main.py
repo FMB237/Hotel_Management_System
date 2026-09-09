@@ -1,5 +1,6 @@
 # Principal Fastapi File
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from database import engine,Base
 from models.user import User
 
@@ -20,6 +21,9 @@ from routes.dashboard import router as dashboard_router
 
 
 app=FastAPI(title="Hotel_Management_System",version="1.0.0")
+
+# Let add this simple cors block 
+app.add_middleware(CORSMiddleware,allows_origins=["*"],allows_credentials=True,allow_methods=["*"],allow_headers=["*"])
 
 
 Base.metadata.create_all(bind=engine)

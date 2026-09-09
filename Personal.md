@@ -53,4 +53,6 @@
 50. add the .env file into the .ignore file and also update this file 
 51. Then add  a Procfile  to tell the server how he is going to launch the app since we gonna deploy the  backend first in this project 
 52. Since we have to deploy and not from the whole app we will just move the requirements.txt file into the backend folder and make the backend as a service on render using the backend folder as root hein  also add the Procfile inside the backend folder instead
-53. 
+53. Let start doing the structure of our Front-end for our Login page 
+54. Before we do anything we need to move to a critical state that is mainly the additions of Cors and Middlewares into our backend 
+55. Since i have added the cors and middlewares can be now move to the frontend file where we will add our index.html which is the main login page 
