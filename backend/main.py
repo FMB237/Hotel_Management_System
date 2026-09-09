@@ -23,7 +23,7 @@ from routes.dashboard import router as dashboard_router
 app=FastAPI(title="Hotel_Management_System",version="1.0.0")
 
 # Let add this simple cors block 
-app.add_middleware(CORSMiddleware,allows_origins=["*"],allows_credentials=True,allow_methods=["*"],allow_headers=["*"])
+app.add_middleware(CORSMiddleware,allow_origins=["*"],allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 
 
 Base.metadata.create_all(bind=engine)
