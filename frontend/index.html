@@ -3,48 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <title>Smart Hostel - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .login-container { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; }
+        .login-container h2 { text-align: center; color: #333; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #555; font-size: 0.9rem; }
+        .form-group input { width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; transition: border 0.3s; }
+        .form-group input:focus { outline: none; border-color: #667eea; }
+        .btn { width: 100%; padding: 0.8rem; background: #667eea; color: white; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+        .btn:hover { background: #5a67d8; }
+        .message { text-align: center; margin-top: 1rem; font-size: 0.9rem; }
+        .error { color: #e53e3e; }
+        .success { color: #38a169; }
+        .link { text-align: center; margin-top: 1rem; font-size: 0.9rem; }
+        .link a { color: #667eea; text-decoration: none; }
+    </style>
 </head>
 <body>
+
     <div class="login-container">
         <h2>Smart Hostel Login</h2>
-        <form id="loginForm" action="">
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" name="" id="email"  placeholder="student@university.com" required>
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" name="" id="password"  placeholder="Enter your password" required> 
-          </div>
-        <button type="submit" class="btn">Login</button>
-        <div class="message" id = "message"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="student@university.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div id="message" class="message"></div>
         </form>
         <div class="link">
-             Don't have an account? <a href="register.html">Register here</a>
+            Don't have an account? <a href="register.html">Register here</a>
         </div>
     </div>
-        <script>
-        // Your live API URL
+
+    <script>
         const API_URL = "https://hotel-management-system-pd7b.onrender.com";
 
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault(); // Stop the page from reloading
+            e.preventDefault();
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const messageDiv = document.getElementById('message');
             const submitBtn = document.querySelector('.btn');
 
-            // UI Loading State
             messageDiv.textContent = "Connecting to API...";
             messageDiv.className = "message";
             submitBtn.disabled = true;
             submitBtn.style.opacity = "0.7";
 
             try {
-                // Send POST request to FastAPI
                 const response = await fetch(`${API_URL}/auth/login`, {
                     method: 'POST',
                     headers: {
@@ -59,7 +74,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    //  SUCCESS! Save the JWT token and user role in the browser
+                    // ✅ SAVE TO LOCALSTORAGE - THIS IS THE KEY PART!
                     localStorage.setItem('token', data.access_token);
                     localStorage.setItem('role', data.role);
                     localStorage.setItem('userId', data.user_id);
@@ -73,18 +88,15 @@
                     }, 1000);
 
                 } else {
-                    // ❌ ERROR (Wrong password or email not found)
                     messageDiv.textContent = data.detail || "Login failed";
                     messageDiv.className = "message error";
                 }
 
             } catch (error) {
-                // Network error (e.g., Render server is sleeping)
                 messageDiv.textContent = "Network error. Please try again.";
                 messageDiv.className = "message error";
                 console.error("Login Error:", error);
             } finally {
-                // Re-enable button
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = "1";
             }
