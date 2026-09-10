@@ -1,646 +1,431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Hostel - Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#FAF9F6; /* warm off-white */
-  --card:#FFFFFF;
-  --border:#E5E7EB;
-  --text:#1F2937;
-  --muted:#6B7280;
-  --primary:#D97706; /* terracotta */
-  --primary-dark:#B45309;
-  --accent:#F59E0B; /* amber */
-  --success:#059669;
-  --error:#DC2626;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.08);
-  --shadow:0 4px 12px rgba(0,0,0,.08);
-}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-body{
-  min-height:100vh;
-  background:var(--bg);
-  color:var(--text);
-  display:flex;flex-direction:column;
-}
-header{
-  background:var(--card);
-  border-bottom:1px solid var(--border);
-  padding:16px 24px;
-  display:flex;align-items:center;justify-content:space-between;
-  box-shadow:var(--shadow-sm);
-}
-.logo{display:flex;align-items:center;gap:10px}
-.logo span{font-weight:700;font-size:18px;letter-spacing:.5px}
-.logo::before{
-  content:"";width:32px;height:32px;background:linear-gradient(135deg,var(--primary),var(--accent));
-  border-radius:8px;display:inline-block;
-}
-.nav-btn{
-  background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;
-  padding:6px 10px;border-radius:6px;transition:background .2s,color .2s;
-}
-.nav-btn:hover{background:var(--border);color:var(--text)}
-.nav-btn.active{color:var(--primary)}
-main{flex:1;padding:24px;overflow-y:auto;}
-.welcome{margin-bottom:28px}
-.welcome h2{font-size:22px;font-weight:600;margin-bottom:6px}
-.role-badge{
-  display:inline-flex;align-items:center;gap:4px;
-  background:rgba(217,119,6,.1);color:var(--primary);
-  padding:4px 10px;border-radius:12px;font-size:13px;font-weight:600;
-}
-.section{
-  background:var(--card);
-  border-radius:16px;
-  border:1px solid var(--border);
-  padding:24px;
-  margin-bottom:24px;
-  box-shadow:var(--shadow-sm);
-}
-.section h3{
-  font-size:18px;font-weight:600;margin-bottom:16px;
-  display:flex;align-items:center;gap:8px;
-}
-.section h3::before{
-  content:"";width:4px;height:100%;background:var(--primary);border-radius:2px;
-}
-.stats-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:16px;margin-bottom:24px;
-}
-.stat-card{
-  background:rgba(217,119,6,.03);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:20px;
-  text-align:center;
-}
-.stat-card h3{
-  font-size:28px;font-weight:700;margin:8px 0 4px;
-  color:var(--primary);
-}
-.stat-card p{
-  font-size:14px;color:var(--muted);
-}
-.notice-item{
-  background:rgba(217,119,6,.05);
-  border-left:3px solid var(--primary);
-  border-radius:0 8px 8px 0;
-  padding:16px;
-  margin-bottom:12px;
-}
-.notice-item h4{
-  font-size:16px;font-weight:600;margin:0 0 8px 0;
-  color:var(--text);
-}
-.notice-item p{
-  font-size:14px;color:var(--muted);margin:0 0 8px 0;
-}
-.notice-item .date{
-  font-size:12px;color:var(--muted);
-}
-.loading,.empty{
-  text-align:center;color:var(--muted);padding:24px;
-}
-.btn-primary{
-  width:100%;padding:12px;border:none;border-radius:10px;
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:white;font-weight:600;font-size:14px;cursor:pointer;
-  transition:transform .05s;
-}
-.btn-primary:active{transform:translateY(1px)}
-.btn-secondary{
-  width:100%;padding:12px;border:none;border-radius:10px;
-  background:rgba(217,119,6,.1);color:var(--primary);
-  font-weight:600;font-size:14px;cursor:pointer;
-}
-.btn-secondary:hover{background:rgba(217,119,6,.2)}
-.hidden{display:none}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hostel - Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #fdf9f3 0%, #fbead2 55%, #f7ddba 100%); min-height: 100vh; color: #1f2937; }
 
-/* Modal */
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;}
-.modal.hidden{display:none !important;}
-.modal-content{background:var(--card);border-radius:16px;padding:24px;width:90%;max-width:480px;box-shadow:var(--shadow);position:relative;}
-.close-btn{position:absolute;top:12px;right:12px;background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;}
-.close-btn:hover{color:var(--text);}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
-.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);}
-.form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(217,119,6,.15)}
-.form-group textarea{resize:vertical;}
-.message{text-align:center;margin-top:12px;font-size:13px}
-.error{color:var(--error)}
-.success{color:var(--success)}
-/* Admin Notice Management */
-.notice-form{
-  background:var(--card);
-  padding:20px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  margin-bottom:20px;
-}
-.notice-form h4{
-  margin-top:0;
-}
-.notice-form .form-group{
-  margin-bottom:12px;
-}
-.notice-form .form-group label{
-  display:block;
-  margin-bottom:6px;
-}
-.notice-form input,
-.notice-form textarea{
-  width:100%;
-  padding:10px;
-  border:1px solid var(--border);
-  border-radius:8px;
-  font-size:14px;
-}
-.notice-form input:focus,
-.notice-form textarea:focus{
-  outline:none;
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(217,119,6,.15);
-}
-.notice-form button{
-  width:auto;
-  padding:10px 20px;
-}
-.notice-list{
-  background:var(--card);
-  padding:20px;
-  border-radius:12px;
-  border:1px solid var(--border);
-}
-.notice-item-admin{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px;
-  border-bottom:1px solid var(--border);
-}
-.notice-item-admin:last-child{
-  border-bottom:none;
-}
-.notice-item-admin .notice-content{
-  flex:1;
-}
-.notice-item-admin .notice-actions{
-  display:flex;
-  gap:8px;
-}
-.notice-item-admin .notice-actions button{
-  padding:6px 10px;
-  font-size:13px;
-}
-</style>
+        /* Navbar */
+        .navbar { background: rgba(255,255,255,.85); backdrop-filter: blur(8px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0e2cc; position: sticky; top: 0; z-index: 100; }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .logo-badge { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .95rem; box-shadow: 0 4px 10px rgba(217,119,6,.3); }
+        .brand h1 { font-size: 1.2rem; color: #1f2937; }
+        .nav-links { display: flex; align-items: center; gap: 15px; }
+        .nav-links span { font-size: .85rem; color: #6b7280; }
+        .btn-logout { background: #fff7ed; color: #b45309; border: 1px solid #f3d9b4; padding: .5rem 1rem; border-radius: 8px; cursor: pointer; font-size: .85rem; font-weight: 600; transition: all .2s; }
+        .btn-logout:hover { background: #b45309; color: #fff; }
+
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .welcome { margin-bottom: 2rem; }
+        .welcome h2 { color: #1f2937; }
+        .role-badge { display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; padding: .25rem .7rem; border-radius: 20px; font-size: .75rem; font-weight: 700; text-transform: uppercase; margin-left: 10px; letter-spacing: .5px; }
+
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: #fff; padding: 1.5rem; border-radius: 14px; box-shadow: 0 8px 20px rgba(180,83,9,.08); text-align: center; border-top: 4px solid #f59e0b; }
+        .stat-card h3 { font-size: 2.2rem; color: #b45309; margin-bottom: .4rem; }
+        .stat-card p { color: #6b7280; font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* Charts */
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .chart-card { background: #fff; padding: 1.5rem; border-radius: 14px; box-shadow: 0 8px 20px rgba(180,83,9,.08); }
+        .chart-card h3 { margin-bottom: 1rem; color: #1f2937; text-align: center; font-size: 1.05rem; }
+
+        /* Sections */
+        .section { background: #fff; padding: 1.5rem; border-radius: 14px; box-shadow: 0 8px 20px rgba(180,83,9,.08); margin-bottom: 2rem; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid #f5e8d3; padding-bottom: .6rem; }
+        .section-header h3 { color: #1f2937; }
+        .btn-gold-sm { background: linear-gradient(135deg, #f59e0b, #b45309); color: #fff; border: none; padding: .5rem 1rem; border-radius: 8px; cursor: pointer; font-size: .85rem; font-weight: 600; box-shadow: 0 4px 12px rgba(217,119,6,.25); }
+        .btn-gold-sm:hover { transform: translateY(-1px); }
+
+        .notice-item { padding: 1rem; border-left: 4px solid #f59e0b; background: #fdf9f0; margin-bottom: 1rem; border-radius: 8px; }
+        .notice-item h4 { color: #1f2937; margin-bottom: .3rem; }
+        .notice-item p { color: #4b5563; font-size: .9rem; }
+        .notice-item .date { font-size: .78rem; color: #9ca3af; margin-top: .5rem; }
+        .pinned-badge { background: #b45309; color: #fff; padding: 2px 7px; border-radius: 4px; font-size: .68rem; margin-left: 8px; font-weight: 700; }
+        .delete-btn { background: #fee2e2; color: #b91c1c; border: none; padding: .4rem .8rem; border-radius: 6px; cursor: pointer; font-size: .78rem; font-weight: 600; margin-top: .5rem; }
+        .delete-btn:hover { background: #b91c1c; color: #fff; }
+
+        .btn-gold { padding: .8rem 1.6rem; border: none; border-radius: 10px; background: linear-gradient(135deg, #f59e0b, #b45309); color: #fff; font-size: .95rem; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(217,119,6,.28); }
+        .btn-gold:hover { transform: translateY(-1px); }
+
+        /* Modals */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(31,41,55,.45); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #fff; padding: 2rem; border-radius: 18px; width: 90%; max-width: 500px; box-shadow: 0 25px 50px rgba(0,0,0,.25); max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h3 { color: #1f2937; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #9ca3af; line-height: 1; }
+        .close-btn:hover { color: #b45309; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: .4rem; color: #374151; font-size: .85rem; font-weight: 600; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: .7rem; border: 1px solid #e7d9c4; border-radius: 8px; font-family: inherit; font-size: .95rem; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.15); }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; }
+        .checkbox-group input { width: auto; margin: 0; }
+        .checkbox-group label { margin: 0; cursor: pointer; }
+        .btn-submit { width: 100%; padding: .8rem; background: linear-gradient(135deg, #f59e0b, #b45309); color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: .5rem; }
+        .message { text-align: center; margin-top: 1rem; font-size: .9rem; }
+        .success { color: #15803d; }
+        .error { color: #dc2626; }
+        .hidden { display: none !important; }
+        .loading { text-align: center; color: #6b7280; padding: 2rem; }
+    </style>
 </head>
 <body>
-<header class="logo">
-  <span>Smart Hostel</span>
-  <button class="nav-btn" id="logoutBtn" title="Logout">Logout</button>
-</header>
-<main>
-  <div class="welcome">
-    <h2>Welcome back!</h2>
-    <span id="userName" class="role-badge">Loading...</span>
-  </div>
 
-  <!-- Admin Only Stats -->
-  <div id="adminStats" class="stats-grid hidden">
-    <div class="stat-card">
-      <h3 id="totalRooms">0</h3>
-      <p>Total Rooms</p>
-    </div>
-    <div class="stat-card">
-      <h3 id="occupiedRooms">0</h3>
-      <p>Occupied Rooms</p>
-    </div>
-    <div class="stat-card">
-      <h3 id="pendingComplaints">0</h3>
-      <p>Pending Complaints</p>
-    </div>
-    <div class="stat-card">
-      <h3 id="totalStudents">0</h3>
-      <p>Total Students</p>
-    </div>
-  </div>
-
-  <!-- Notices Section (For Everyone) -->
-  <section class="section">
-    <h3>📢 Latest Notices & Announcements</h3>
-    <div id="noticesList">
-      <p class="loading">Loading notices...</p>
-    </div>
-  </section>
-
-  <!-- Student Action: File Complaint -->
-  <section id="studentActions" class="section hidden">
-    <h3>🎫 Need Help?</h3>
-    <p style="margin-bottom:1rem;color:var(--muted);">Having issues with your room or facilities?</p>
-    <button class="btn-secondary" id="openComplaintModal">File a New Complaint</button>
-  </section>
-TEST
-<!-- Admin Notice -->
-📌
-<div id="adminNoticeContainer"></div>
-</main>
-
-<!-- Complaint Modal -->
-<div id="complaintModal" class="modal hidden">
-  <div class="modal-content">
-    <span class="close-btn" id="closeComplaintModal">&times;</span>
-    <h2>File a Complaint</h2>
-    <form id="complaintForm">
-      <div class="form-group">
-        <label for="complaintTitle">Title</label>
-        <input type="text" id="complaintTitle" placeholder="Brief title of the issue" required>
-      </div>
-      <div class="form-group">
-        <label for="complaintDescription">Description</label>
-        <textarea id="complaintDescription" rows="4" placeholder="Describe the issue in detail" required></textarea>
-      </div>
-      <div class="form-group">
-        <label for="complaintPriority">Priority</label>
-        <select id="complaintPriority" required>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="complaintProof">Proof (Image)</label>
-        <input type="file" id="complaintProof" accept="image/*">
-        <small>Optional: Upload an image as proof (jpg, png)</small>
-      </div>
-      <button type="submit" class="btn-primary" id="submitComplaint">Submit Complaint</button>
-      <div id="complaintMessage" class="message"></div>
-    </form>
-  </div>
-</div>
-
-<script>
-const API_URL = "https://hotel-management-system-pd7b.onrender.com";
-
-const token = localStorage.getItem('token');
-const role = localStorage.getItem('role');
-const userId = localStorage.getItem('userId');
-
-if (!token) {
-  window.location.href = 'index.html';
-}
-
-async function initDashboard() {
-  try {
-    const res = await fetch(`${API_URL}/auth/me`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (!res.ok) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      localStorage.removeItem('userId');
-      window.location.href = 'index.html';
-      return;
-    }
-    const user = await res.json();
-
-    document.getElementById('userName').textContent = (user.role || role || '').toUpperCase();
-    document.querySelector('.logo').title = `Logged in as ${user.email}`;
-
-    const currentRole = user.role || role;
-    if (currentRole === 'admin') {
-      document.getElementById('adminStats').classList.remove('hidden');
-      fetchDashboardStats();
-    } else {
-      document.getElementById('studentActions').classList.remove('hidden');
-    }
-
-    fetchNotices();
-  } catch (e) {
-    console.error('Auth validation failed', e);
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('userId');
-    window.location.href = 'index.html';
-  }
-}
-
-initDashboard();
-
-async function fetchDashboardStats() {
-  try {
-    const response = await fetch(`${API_URL}/dashboard/stats`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (response.ok) {
-      const data = await response.json();
-      document.getElementById('totalRooms').textContent = data.total_rooms;
-      document.getElementById('occupiedRooms').textContent = data.occupied_rooms;
-      document.getElementById('pendingComplaints').textContent = data.pending_complaints;
-      document.getElementById('totalStudents').textContent = data.total_students;
-    }
-  } catch (error) {
-    console.error("Failed to fetch stats:", error);
-  }
-}
-
-async function fetchNotices() {
-  try {
-    const response = await fetch(`${API_URL}/notices/`);
-    const data = await response.json();
-    const noticesList = document.getElementById('noticesList');
-    noticesList.innerHTML = '';
-
-    if (data.length === 0) {
-      noticesList.innerHTML = '<p class="empty">No active notices at the moment.</p>';
-      return;
-    }
-
-    data.forEach(notice => {
-      const date = new Date(notice.created_at).toLocaleDateString();
-      const pinnedBadge = notice.is_pinned ?
-        '<span style="background:#ed8936;color:white;padding:2px 6px;border-radius:4px;font-size:0.7rem;margin-left:8px;">PINNED</span>' : '';
-
-      const noticeHTML = `
-        <div class="notice-item">
-          <h4>${notice.title} ${pinnedBadge}</h4>
-          <p>${notice.content}</p>
-          <div class="date">Posted on: ${date}</div>
+    <nav class="navbar">
+        <div class="brand">
+            <div class="logo-badge">SH</div>
+            <h1>Smart Hostel</h1>
         </div>
-      `;
-      noticesList.innerHTML += noticeHTML;
-    });
-  } catch (error) {
-    document.getElementById('noticesList').innerHTML = '<p class="empty" style="color:var(--error);">Failed to load notices.</p>';
-    console.error("Failed to fetch notices:", error);
-  }
-}
-
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('role');
-  localStorage.removeItem('userId');
-  window.location.href = 'index.html';
-});
-
-// Complaint Modal Logic
-const complaintModal = document.getElementById('complaintModal');
-const openComplaintModal = document.getElementById('openComplaintModal');
-const closeComplaintModal = document.getElementById('closeComplaintModal');
-const complaintForm = document.getElementById('complaintForm');
-const complaintMessage = document.getElementById('complaintMessage');
-
-if (openComplaintModal) {
-  openComplaintModal.addEventListener('click', () => {
-    complaintModal.classList.remove('hidden');
-  });
-}
-if (closeComplaintModal) {
-  closeComplaintModal.addEventListener('click', () => {
-    complaintModal.classList.add('hidden');
-    complaintForm.reset();
-    complaintMessage.textContent = '';
-  });
-}
-window.addEventListener('click', (e) => {
-  if (e.target === complaintModal) {
-    complaintModal.classList.add('hidden');
-    complaintForm.reset();
-    complaintMessage.textContent = '';
-  }
-});
-
-if (complaintForm) {
-  complaintForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const title = document.getElementById('complaintTitle').value.trim();
-    const description = document.getElementById('complaintDescription').value.trim();
-    const prioritySelect = document.getElementById('complaintPriority');
-    const priority = prioritySelect.value.charAt(0).toUpperCase() + prioritySelect.value.slice(1);
-    const proofFile = document.getElementById('complaintProof').files[0];
-
-    complaintMessage.textContent = "Submitting...";
-    complaintMessage.className = "message";
-
-    try {
-      const complaintData = {
-        title,
-        description,
-        priority,
-        proof_image: null
-      };
-
-      const response = await fetch(`${API_URL}/complaints/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(complaintData)
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        complaintMessage.textContent = "Complaint submitted successfully!";
-        complaintMessage.className = "message success";
-        complaintForm.reset();
-        setTimeout(() => {
-          complaintModal.classList.add('hidden');
-        }, 1500);
-      } else {
-        complaintMessage.textContent = data.detail || "Submission failed";
-        complaintMessage.className = "message error";
-      }
-    } catch (err) {
-      complaintMessage.textContent = "Network error. Please try again.";
-      complaintMessage.className = "message error";
-      console.error("Complaint Error:", err);
-    }
-  });
-}
-// Admin Notice Management
-if (role === 'admin') {
-  const container = document.getElementById('adminNoticeContainer');
-  container.innerHTML = `
-    <section class="section">
-      <h3>📌 Manage Notices</h3>
-      <div class="notice-form">
-        <h4>Create New Notice</h4>
-        <form id="noticeForm">
-          <div class="form-group">
-            <label for="noticeTitle">Title</label>
-            <input type="text" id="noticeTitle" required>
-          </div>
-          <div class="form-group">
-            <label for="noticeContent">Content</label>
-            <textarea id="noticeContent" rows="4" required></textarea>
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="noticePinned">
-              Pin to top
-            </label>
-          </div>
-          <button type="submit" class="btn-primary">Post Notice</button>
-        </form>
-        <div id="noticeMessage" class="message"></div>
-      </div>
-      <div class="notice-list">
-        <h4>Existing Notices</h4>
-        <div id="adminNoticesList">
-          <p class="loading">Loading notices...</p>
+        <div class="nav-links">
+            <span id="userEmail"></span>
+            <button class="btn-logout" onclick="logout()">Logout</button>
         </div>
-      </div>
-    </section>
-  `;
+    </nav>
 
-  const noticeForm = document.getElementById('noticeForm');
-  const noticeMessage = document.getElementById('noticeMessage');
-  const adminNoticesList = document.getElementById('adminNoticesList');
-  const noticeTitleInput = document.getElementById('noticeTitle');
-  const noticeContentInput = document.getElementById('noticeContent');
-  const noticePinnedCheckbox = document.getElementById('noticePinned');
+    <div class="container">
+        <div class="welcome">
+            <h2>Welcome back! <span id="userName" class="role-badge">Loading...</span></h2>
+        </div>
 
-  // Fetch notices for admin management (all active notices)
-  async function fetchAdminNotices() {
-    try {
-      const response = await fetch(`${API_URL}/notices/`);
-      const notices = await response.json();
-      adminNoticesList.innerHTML = '';
-      if (notices.length === 0) {
-        adminNoticesList.innerHTML = '<p class="empty">No notices yet.</p>';
-        return;
-      }
-      notices.forEach(notice => {
-        const noticeElement = document.createElement('div');
-        noticeElement.className = 'notice-item-admin';
-        noticeElement.innerHTML = `
-          <div class="notice-content">
-            <strong>${notice.title}</strong>
-            <p>${notice.content}</p>
-            <small>Posted by ${notice.author_id} • ${new Date(notice.created_at).toLocaleString()}</small>
-          </div>
-          <div class="notice-actions">
-            <button class="btn-secondary toggle-pin" data-id="${notice.id}" data-pinned="${notice.is_pinned}">
-              ${notice.is_pinned ? 'Unpin' : 'Pin'}
-            </button>
-            <button class="btn-secondary delete-notice" data-id="${notice.id}">Delete</button>
-          </div>
-        `;
-        adminNoticesList.appendChild(noticeElement);
-      });
-      // Add event listeners for pins and deletes
-      document.querySelectorAll('.toggle-pin').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          const id = e.target.dataset.id;
-          const pinned = e.target.dataset.pinned === 'true';
-          try {
-            const response = await fetch(`${API_URL}/notices/${id}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify({ is_pinned: !pinned })
-            });
-            if (response.ok) {
-              fetchAdminNotices();
-            } else {
-              const data = await response.json();
-              alert(data.detail || 'Failed to update pin');
-            }
-          } catch (err) {
-            console.error(err);
-            alert('Network error');
-          }
-        });
-      });
-      document.querySelectorAll('.delete-notice').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          const id = e.target.dataset.id;
-          if (!confirm('Delete this notice?')) return;
-          try {
-            const response = await fetch(`${API_URL}/notices/${id}`, {
-              method: 'DELETE',
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
-            });
-            if (response.ok) {
-              fetchAdminNotices();
-            } else {
-              const data = await response.json();
-              alert(data.detail || 'Failed to delete');
-            }
-          } catch (err) {
-            console.error(err);
-            alert('Network error');
-          }
-        });
-      });
-    } catch (error) {
-      console.error('Failed to fetch notices:', error);
-      adminNoticesList.innerHTML = '<p class="empty" style="color:var(--error);">Failed to load notices.</p>';
-    }
-  }
+        <!-- Admin Stats -->
+        <div id="adminStats" class="stats-grid hidden">
+            <div class="stat-card"><h3 id="totalRooms">0</h3><p>Total Rooms</p></div>
+            <div class="stat-card"><h3 id="occupiedRooms">0</h3><p>Occupied Rooms</p></div>
+            <div class="stat-card"><h3 id="pendingComplaints">0</h3><p>Pending Complaints</p></div>
+            <div class="stat-card"><h3 id="totalStudents">0</h3><p>Total Students</p></div>
+        </div>
 
-  // Create notice
-  if (noticeForm) {
-    noticeForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const title = noticeTitleInput.value.trim();
-      const content = noticeContentInput.value.trim();
-      const isPinned = noticePinnedCheckbox.checked;
-      noticeMessage.textContent = 'Posting...';
-      noticeMessage.className = 'message';
-      try {
-        const response = await fetch(`${API_URL}/notices/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ title, content, is_pinned: isPinned })
-        });
-        const data = await response.json();
-        if (response.ok) {
-          noticeMessage.textContent = 'Notice posted successfully!';
-          noticeMessage.className = 'message success';
-          noticeForm.reset();
-          fetchAdminNotices();
-          setTimeout(() => {
-            noticeMessage.textContent = '';
-          }, 1500);
-        } else {
-          noticeMessage.textContent = data.detail || 'Failed to post';
-          noticeMessage.className = 'message error';
+        <!-- Admin Charts -->
+        <div id="adminCharts" class="charts-grid hidden">
+            <div class="chart-card">
+                <h3>🏠 Room Occupancy</h3>
+                <canvas id="occupancyChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>🎫 Monthly Complaints</h3>
+                <canvas id="complaintsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Notices -->
+        <div class="section">
+            <div class="section-header">
+                <h3>📢 Latest Notices & Announcements</h3>
+                <button id="createNoticeBtn" class="btn-gold-sm hidden" onclick="openNoticeModal()">+ Create Notice</button>
+            </div>
+            <div id="noticesList"><p class="loading">Loading notices...</p></div>
+        </div>
+
+        <!-- Student Actions -->
+        <div id="studentActions" class="section hidden">
+            <div class="section-header"><h3>🎫 Need Help?</h3></div>
+            <p style="margin-bottom: 1rem; color: #4b5563;">Having issues with your room or facilities?</p>
+            <button class="btn-gold" onclick="openModal()">File a New Complaint</button>
+        </div>
+    </div>
+
+    <!-- Complaint Modal -->
+    <div id="complaintModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎫 File a Complaint</h3>
+                <button type="button" onclick="closeModal()" class="close-btn">&times;</button>
+            </div>
+            <form id="complaintForm">
+                <div class="form-group">
+                    <label for="c-title">Title</label>
+                    <input type="text" id="c-title" placeholder="e.g., Leaking pipe in Room 101" required>
+                </div>
+                <div class="form-group">
+                    <label for="c-desc">Description</label>
+                    <textarea id="c-desc" rows="4" placeholder="Describe the issue in detail..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="c-priority">Priority</label>
+                    <select id="c-priority" required>
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="c-file">Proof (Image)</label>
+                    <input type="file" id="c-file" accept="image/*">
+                    <small style="color:#9ca3af;">Optional: Upload an image as proof (jpg, png)</small>
+                </div>
+                <button type="submit" class="btn-submit">Submit Complaint</button>
+                <div id="complaintMessage" class="message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notice Modal -->
+    <div id="noticeModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📢 Create New Notice</h3>
+                <button type="button" onclick="closeNoticeModal()" class="close-btn">&times;</button>
+            </div>
+            <form id="noticeForm">
+                <div class="form-group">
+                    <label for="n-title">Title</label>
+                    <input type="text" id="n-title" placeholder="e.g., Water Shutdown Tomorrow" required>
+                </div>
+                <div class="form-group">
+                    <label for="n-content">Content</label>
+                    <textarea id="n-content" rows="4" placeholder="Write the full announcement here..." required></textarea>
+                </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="n-pinned">
+                    <label for="n-pinned">Pin this notice to the top</label>
+                </div>
+                <button type="submit" class="btn-submit">Publish Notice</button>
+                <div id="noticeMessage" class="message"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://hotel-management-system-pd7b.onrender.com";
+
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        const userId = localStorage.getItem('userId');
+
+        // Auth guard (stops script if not logged in)
+        if (!token || !role) {
+            localStorage.clear();
+            window.location.replace('index.html');
+            throw new Error('Not authenticated - redirecting to login.');
         }
-      } catch (err) {
-        noticeMessage.textContent = 'Network error. Please try again.';
-        noticeMessage.className = 'message error';
-        console.error('Notice Error:', err);
-      }
-    });
-  }
 
-  // Initial load
-  fetchAdminNotices();
-}
-// Close modal with Escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !complaintModal.classList.contains('hidden')) {
-    complaintModal.classList.add('hidden');
-    complaintForm.reset();
-    complaintMessage.textContent = '';
-  }
-});
-</script>
+        document.getElementById('userName').textContent = role.toUpperCase();
+        document.getElementById('userEmail').textContent = "ID: " + (userId || '');
+
+        if (role === 'admin') {
+            document.getElementById('adminStats').classList.remove('hidden');
+            document.getElementById('adminCharts').classList.remove('hidden');
+            document.getElementById('createNoticeBtn').classList.remove('hidden');
+            fetchDashboardStats();
+            fetchDashboardCharts();
+        } else {
+            document.getElementById('studentActions').classList.remove('hidden');
+        }
+
+        fetchNotices();
+
+        async function fetchDashboardStats() {
+            try {
+                const response = await fetch(`${API_URL}/dashboard/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('totalRooms').textContent = data.total_rooms;
+                    document.getElementById('occupiedRooms').textContent = data.occupied_rooms;
+                    document.getElementById('pendingComplaints').textContent = data.pending_complaints;
+                    document.getElementById('totalStudents').textContent = data.total_students;
+                }
+            } catch (error) { console.error("Stats error:", error); }
+        }
+
+        let occupancyChartInstance = null;
+        let complaintsChartInstance = null;
+
+        async function fetchDashboardCharts() {
+            try {
+                const response = await fetch(`${API_URL}/dashboard/charts`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error("Failed to fetch chart data");
+                const data = await response.json();
+
+                if (typeof Chart === 'undefined') { console.error("Chart.js failed to load"); return; }
+
+                // Golden Doughnut Chart
+                if (occupancyChartInstance) occupancyChartInstance.destroy();
+                occupancyChartInstance = new Chart(document.getElementById('occupancyChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Occupied', 'Available'],
+                        datasets: [{
+                            data: [data.occupancy_ratio.occupied, data.occupancy_ratio.available],
+                            backgroundColor: ['#b45309', '#fbbf24'],
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                });
+
+                // Golden Bar Chart
+                if (complaintsChartInstance) complaintsChartInstance.destroy();
+                complaintsChartInstance = new Chart(document.getElementById('complaintsChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: data.monthly_complaints.map(item => item.month),
+                        datasets: [{
+                            label: 'Complaints',
+                            data: data.monthly_complaints.map(item => item.count),
+                            backgroundColor: '#f59e0b',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            } catch (error) { console.error("Chart error:", error); }
+        }
+
+        async function fetchNotices() {
+            try {
+                const response = await fetch(`${API_URL}/notices/`);
+                const data = await response.json();
+                const noticesList = document.getElementById('noticesList');
+                noticesList.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    noticesList.innerHTML = '<p style="color:#6b7280;">No active notices at the moment.</p>';
+                    return;
+                }
+
+                data.forEach(notice => {
+                    const date = new Date(notice.created_at).toLocaleDateString();
+                    const pinnedBadge = notice.is_pinned ? '<span class="pinned-badge">PINNED</span>' : '';
+                    const adminDeleteBtn = (role === 'admin')
+                        ? `<button class="delete-btn" onclick="deleteNotice(${notice.id})">Delete</button>` : '';
+
+                    noticesList.innerHTML += `
+                        <div class="notice-item">
+                            <h4>${notice.title} ${pinnedBadge}</h4>
+                            <p>${notice.content}</p>
+                            <div class="date">Posted on: ${date}</div>
+                            ${adminDeleteBtn}
+                        </div>`;
+                });
+            } catch (error) {
+                document.getElementById('noticesList').innerHTML = '<p class="error">Failed to load notices.</p>';
+            }
+        }
+
+        async function deleteNotice(id) {
+            if (!confirm("Are you sure you want to delete this notice?")) return;
+            try {
+                const response = await fetch(`${API_URL}/notices/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) fetchNotices();
+                else alert("Failed to delete notice.");
+            } catch (error) { console.error("Delete error:", error); }
+        }
+
+        // Complaint Modal
+        function openModal() { document.getElementById('complaintModal').classList.remove('hidden'); }
+        function closeModal() {
+            document.getElementById('complaintModal').classList.add('hidden');
+            document.getElementById('complaintForm').reset();
+            document.getElementById('complaintMessage').textContent = '';
+        }
+
+        document.getElementById('complaintForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const title = document.getElementById('c-title').value;
+            const description = document.getElementById('c-desc').value;
+            const priority = document.getElementById('c-priority').value;
+            const fileInput = document.getElementById('c-file');
+            const messageDiv = document.getElementById('complaintMessage');
+            const submitBtn = this.querySelector('.btn-submit');
+
+            messageDiv.textContent = "Submitting...";
+            messageDiv.className = "message";
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/complaints/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ title, description, priority })
+                });
+                if (!response.ok) throw new Error("Failed to create complaint");
+                const complaintData = await response.json();
+
+                if (fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+                    const uploadResponse = await fetch(`${API_URL}/complaints/${complaintData.id}/upload-proof`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                    if (!uploadResponse.ok) throw new Error("Complaint created, but image upload failed");
+                }
+
+                messageDiv.textContent = "Complaint filed successfully!";
+                messageDiv.className = "message success";
+                setTimeout(closeModal, 1500);
+            } catch (error) {
+                messageDiv.textContent = "Error: " + error.message;
+                messageDiv.className = "message error";
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Notice Modal
+        function openNoticeModal() { document.getElementById('noticeModal').classList.remove('hidden'); }
+        function closeNoticeModal() {
+            document.getElementById('noticeModal').classList.add('hidden');
+            document.getElementById('noticeForm').reset();
+            document.getElementById('noticeMessage').textContent = '';
+        }
+
+        document.getElementById('noticeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const title = document.getElementById('n-title').value;
+            const content = document.getElementById('n-content').value;
+            const isPinned = document.getElementById('n-pinned').checked;
+            const messageDiv = document.getElementById('noticeMessage');
+            const submitBtn = this.querySelector('.btn-submit');
+
+            messageDiv.textContent = "Publishing...";
+            messageDiv.className = "message";
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/notices/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ title, content, is_pinned: isPinned })
+                });
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || "Failed to create notice");
+                }
+                messageDiv.textContent = "Notice published successfully!";
+                messageDiv.className = "message success";
+                setTimeout(() => { closeNoticeModal(); fetchNotices(); }, 1000);
+            } catch (error) {
+                messageDiv.textContent = "Error: " + error.message;
+                messageDiv.className = "message error";
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
 </body>
 </html>
