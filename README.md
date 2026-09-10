@@ -1,8 +1,9 @@
 # 🏠 Smart Hostel & Student Management System
 
-> A full-stack hostel management platform with secure authentication, room allocation, complaint ticketing, announcements, and a real-time analytics dashboard — built with **FastAPI**.
+> A full-stack hostel management platform with secure authentication, room allocation, complaint ticketing, announcements, and a real-time analytics dashboard — built with **FastAPI** + **Vanilla JS**.
 
-**🌍 Live API:** https://hotel-management-system-pd7b.onrender.com
+**🌍 Live App:** https://hotel-management-system-ui.onrender.com/
+**⚙️ Live API:** https://hotel-management-system-pd7b.onrender.com
 **📚 Interactive Docs (Swagger):** https://hotel-management-system-pd7b.onrender.com/docs
 
 ---
@@ -19,13 +20,14 @@ Developed during my **TechSkillHub Full Stack Development Internship** (02 Aug �
 
 ## 🛠️ Tech Stack
 
-| Layer      | Technologies |
-|------------|--------------|
-| Backend    | FastAPI, Uvicorn, SQLAlchemy, Pydantic v2 |
-| Database   | SQLite |
-| Security   | JWT (python-jose), bcrypt (passlib), HTTPBearer, RBAC |
-| Files      | python-multipart, aiofiles |
-| Deployment | Render, Git/GitHub, Procfile, .env |
+| Layer | Technologies |
+| --- | --- |
+| Backend | FastAPI, Uvicorn, SQLAlchemy, Pydantic v2 |
+| Frontend | HTML5, CSS3 (Glassmorphism), Vanilla JavaScript, Chart.js |
+| Database | SQLite |
+| Security | JWT (python-jose), bcrypt (passlib), HTTPBearer, RBAC |
+| Files | python-multipart, aiofiles |
+| Deployment | Render (Static Site + Web Service), Git/GitHub, Procfile, .env |
 
 ---
 
@@ -38,12 +40,13 @@ Developed during my **TechSkillHub Full Stack Development Internship** (02 Aug �
 - 👤 **User Profiles** — Profile viewing and profile picture upload.
 - 📊 **Analytics Dashboard** — Total students/rooms, occupied vs available rooms, pending complaints, monthly complaint trends grouped via SQL aggregation.
 - 🌐 **RESTful API** — Auto-generated Swagger docs, proper HTTP status codes, JSON responses.
+- 🎨 **Modern 2026 UI** — Dark/Light theme toggle, glassmorphism cards, animated stat counters, skeleton loading, responsive design.
 
 ---
 
 ## 📁 Project Structure
 
-```
+```javascript
 Hotel_Management_System/
 ├── backend/
 │   ├── models/          # SQLAlchemy tables (user, room, complaint, notice)
@@ -56,7 +59,10 @@ Hotel_Management_System/
 │   ├── requirements.txt # Minimal production dependencies
 │   ├── .env             # SECRET_KEY, DATABASE_URL (not committed)
 │   └── Procfile         # Render start command
-├── frontend/            # UI (HTML/CSS/JS)
+├── frontend/
+│   ├── index.html       # Login page (glassmorphism, theme toggle)
+│   ├── register.html    # Registration page
+│   └── dashboard.html   # Admin/Student dashboard (Chart.js, dark/light mode)
 ├── .gitignore
 └── README.md
 ```
@@ -77,6 +83,14 @@ uvicorn main:app --reload
 
 Then open http://127.0.0.1:8000/docs
 
+**Frontend (local):** Simply open `frontend/index.html` in your browser, or serve it with any static server:
+
+```bash
+cd frontend
+python3 -m http.server 5500
+# Open http://localhost:5500
+```
+
 ---
 
 ## 📡 API Endpoints
@@ -92,10 +106,18 @@ Then open http://127.0.0.1:8000/docs
 
 ## 🌍 Deployment (Render)
 
+### Backend (Web Service)
+
 - **Root Directory:** `backend` (main.py lives inside the backend folder)
 - **Build Command:** `pip install -r requirements.txt`
 - **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
 - **Env Vars:** `SECRET_KEY`, `DATABASE_URL` configured in the Render dashboard.
+
+### Frontend (Static Site)
+
+- **Root Directory:** `frontend`
+- **Build Command:** *(leave empty — pure HTML/CSS/JS)*
+- **Publish Directory:** `/` (or leave default)
 
 ---
 
@@ -110,6 +132,7 @@ Then open http://127.0.0.1:8000/docs
 7. **Stale SQLite database** — After model changes, the old `hostel.db` kept the broken schema; deleting it and letting `Base.metadata.create_all()` rebuild fixed lingering 401s.
 8. **Dashboard schema typo** — `total_compaints` (missing "l") triggered a ResponseValidationError; matched schema fields to response keys.
 9. **Deployment structure** — Render failed because `main.py` sits in `backend/`; solved with Render's **Root Directory = backend** setting plus moving `requirements.txt` and `Procfile` inside it.
+10. **CORS on split deployment** — Frontend (Render Static) couldn't reach the API (Render Web Service) due to CORS. Added `CORSMiddleware` with explicit origin whitelist in `main.py`.
 
 ---
 
@@ -130,5 +153,3 @@ Skills: FastAPI, Flask, HTML/CSS/JS, Linux, Bash, Git, Cisco Networking, Virtual
 ## 🙏 Acknowledgments
 
 Special thanks to **TechSkillHub** for the internship opportunity, mentorship, and the structured 8-week action plan that guided this project.
-TSH_README_EOF
-echo "✅ README.md created!" && ls -la README.md
