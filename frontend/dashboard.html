@@ -137,6 +137,69 @@ main{flex:1;padding:24px;overflow-y:auto;}
 .message{text-align:center;margin-top:12px;font-size:13px}
 .error{color:var(--error)}
 .success{color:var(--success)}
+/* Admin Notice Management */
+.notice-form{
+  background:var(--card);
+  padding:20px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  margin-bottom:20px;
+}
+.notice-form h4{
+  margin-top:0;
+}
+.notice-form .form-group{
+  margin-bottom:12px;
+}
+.notice-form .form-group label{
+  display:block;
+  margin-bottom:6px;
+}
+.notice-form input,
+.notice-form textarea{
+  width:100%;
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-size:14px;
+}
+.notice-form input:focus,
+.notice-form textarea:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(217,119,6,.15);
+}
+.notice-form button{
+  width:auto;
+  padding:10px 20px;
+}
+.notice-list{
+  background:var(--card);
+  padding:20px;
+  border-radius:12px;
+  border:1px solid var(--border);
+}
+.notice-item-admin{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  border-bottom:1px solid var(--border);
+}
+.notice-item-admin:last-child{
+  border-bottom:none;
+}
+.notice-item-admin .notice-content{
+  flex:1;
+}
+.notice-item-admin .notice-actions{
+  display:flex;
+  gap:8px;
+}
+.notice-item-admin .notice-actions button{
+  padding:6px 10px;
+  font-size:13px;
+}
 </style>
 </head>
 <body>
@@ -184,6 +247,10 @@ main{flex:1;padding:24px;overflow-y:auto;}
     <p style="margin-bottom:1rem;color:var(--muted);">Having issues with your room or facilities?</p>
     <button class="btn-secondary" id="openComplaintModal">File a New Complaint</button>
   </section>
+TEST
+<!-- Admin Notice -->
+📌
+<div id="adminNoticeContainer"></div>
 </main>
 
 <!-- Complaint Modal -->
@@ -397,6 +464,174 @@ if (complaintForm) {
       console.error("Complaint Error:", err);
     }
   });
+}
+// Admin Notice Management
+if (role === 'admin') {
+  const container = document.getElementById('adminNoticeContainer');
+  container.innerHTML = `
+    <section class="section">
+      <h3>📌 Manage Notices</h3>
+      <div class="notice-form">
+        <h4>Create New Notice</h4>
+        <form id="noticeForm">
+          <div class="form-group">
+            <label for="noticeTitle">Title</label>
+            <input type="text" id="noticeTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="noticeContent">Content</label>
+            <textarea id="noticeContent" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="noticePinned">
+              Pin to top
+            </label>
+          </div>
+          <button type="submit" class="btn-primary">Post Notice</button>
+        </form>
+        <div id="noticeMessage" class="message"></div>
+      </div>
+      <div class="notice-list">
+        <h4>Existing Notices</h4>
+        <div id="adminNoticesList">
+          <p class="loading">Loading notices...</p>
+        </div>
+      </div>
+    </section>
+  `;
+
+  const noticeForm = document.getElementById('noticeForm');
+  const noticeMessage = document.getElementById('noticeMessage');
+  const adminNoticesList = document.getElementById('adminNoticesList');
+  const noticeTitleInput = document.getElementById('noticeTitle');
+  const noticeContentInput = document.getElementById('noticeContent');
+  const noticePinnedCheckbox = document.getElementById('noticePinned');
+
+  // Fetch notices for admin management (all active notices)
+  async function fetchAdminNotices() {
+    try {
+      const response = await fetch(`${API_URL}/notices/`);
+      const notices = await response.json();
+      adminNoticesList.innerHTML = '';
+      if (notices.length === 0) {
+        adminNoticesList.innerHTML = '<p class="empty">No notices yet.</p>';
+        return;
+      }
+      notices.forEach(notice => {
+        const noticeElement = document.createElement('div');
+        noticeElement.className = 'notice-item-admin';
+        noticeElement.innerHTML = `
+          <div class="notice-content">
+            <strong>${notice.title}</strong>
+            <p>${notice.content}</p>
+            <small>Posted by ${notice.author_id} • ${new Date(notice.created_at).toLocaleString()}</small>
+          </div>
+          <div class="notice-actions">
+            <button class="btn-secondary toggle-pin" data-id="${notice.id}" data-pinned="${notice.is_pinned}">
+              ${notice.is_pinned ? 'Unpin' : 'Pin'}
+            </button>
+            <button class="btn-secondary delete-notice" data-id="${notice.id}">Delete</button>
+          </div>
+        `;
+        adminNoticesList.appendChild(noticeElement);
+      });
+      // Add event listeners for pins and deletes
+      document.querySelectorAll('.toggle-pin').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.target.dataset.id;
+          const pinned = e.target.dataset.pinned === 'true';
+          try {
+            const response = await fetch(`${API_URL}/notices/${id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({ is_pinned: !pinned })
+            });
+            if (response.ok) {
+              fetchAdminNotices();
+            } else {
+              const data = await response.json();
+              alert(data.detail || 'Failed to update pin');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Network error');
+          }
+        });
+      });
+      document.querySelectorAll('.delete-notice').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.target.dataset.id;
+          if (!confirm('Delete this notice?')) return;
+          try {
+            const response = await fetch(`${API_URL}/notices/${id}`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            if (response.ok) {
+              fetchAdminNotices();
+            } else {
+              const data = await response.json();
+              alert(data.detail || 'Failed to delete');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Network error');
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Failed to fetch notices:', error);
+      adminNoticesList.innerHTML = '<p class="empty" style="color:var(--error);">Failed to load notices.</p>';
+    }
+  }
+
+  // Create notice
+  if (noticeForm) {
+    noticeForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = noticeTitleInput.value.trim();
+      const content = noticeContentInput.value.trim();
+      const isPinned = noticePinnedCheckbox.checked;
+      noticeMessage.textContent = 'Posting...';
+      noticeMessage.className = 'message';
+      try {
+        const response = await fetch(`${API_URL}/notices/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ title, content, is_pinned: isPinned })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          noticeMessage.textContent = 'Notice posted successfully!';
+          noticeMessage.className = 'message success';
+          noticeForm.reset();
+          fetchAdminNotices();
+          setTimeout(() => {
+            noticeMessage.textContent = '';
+          }, 1500);
+        } else {
+          noticeMessage.textContent = data.detail || 'Failed to post';
+          noticeMessage.className = 'message error';
+        }
+      } catch (err) {
+        noticeMessage.textContent = 'Network error. Please try again.';
+        noticeMessage.className = 'message error';
+        console.error('Notice Error:', err);
+      }
+    });
+  }
+
+  // Initial load
+  fetchAdminNotices();
 }
 // Close modal with Escape key
 document.addEventListener('keydown', (e) => {
