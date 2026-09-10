@@ -8,7 +8,7 @@ from utils.jwt import get_current_user
 from models.user import User
 
 
-router = APIRouter(prefix="/compaints",tags=["Complaints"])
+router = APIRouter(prefix="/complaints",tags=["Complaints"])
 
 # Let create a Complaint 
 

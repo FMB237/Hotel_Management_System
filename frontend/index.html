@@ -1,106 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Hostel - Login</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .login-container { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; }
-        .login-container h2 { text-align: center; color: #333; margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; color: #555; font-size: 0.9rem; }
-        .form-group input { width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; transition: border 0.3s; }
-        .form-group input:focus { outline: none; border-color: #667eea; }
-        .btn { width: 100%; padding: 0.8rem; background: #667eea; color: white; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
-        .btn:hover { background: #5a67d8; }
-        .message { text-align: center; margin-top: 1rem; font-size: 0.9rem; }
-        .error { color: #e53e3e; }
-        .success { color: #38a169; }
-        .link { text-align: center; margin-top: 1rem; font-size: 0.9rem; }
-        .link a { color: #667eea; text-decoration: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Hostel - Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF7ED;
+  --card:#FFFFFF;
+  --text:#1F2937;
+  --muted:#6B7280;
+  --primary:#D97706;
+  --primary-dark:#B45309;
+  --accent:#F59E0B;
+  --border:#E5E7EB;
+  --success:#059669;
+  --error:#DC2626;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, #FED7AA 0%, transparent 60%),
+    radial-gradient(800px 500px at -10% 110%, #FDE68A 0%, transparent 60%),
+    var(--bg);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.card{
+  width:100%;max-width:420px;background:var(--card);border-radius:20px;
+  box-shadow:0 20px 60px rgba(31,41,55,.08),0 1px 0 rgba(0,0,0,.02);
+  padding:32px;border:1px solid var(--border);
+}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.logo{
+  width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--accent));
+  display:grid;place-items:center;color:white;font-weight:700;font-size:18px;
+}
+h2{color:var(--text);font-size:22px;font-weight:700}
+.subtitle{color:var(--muted);font-size:14px;margin-top:6px;margin-bottom:24px}
+.form-group{margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px}
+.input-wrap{position:relative}
+input{
+  width:100%;padding:12px 44px 12px 14px;border:1px solid var(--border);border-radius:12px;
+  font-size:15px;background:#fff;color:var(--text);transition:border .2s,box-shadow .2s;
+}
+input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(217,119,6,.15)}
+.toggle{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--muted);padding:6px;border-radius:8px;
+}
+.toggle:hover{background:#F3F4F6}
+.btn{
+  width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;font-weight:600;font-size:15px;cursor:pointer;transition:transform .05s,opacity .2s;
+}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.7;cursor:not-allowed}
+.message{text-align:center;margin-top:14px;font-size:13px}
+.error{color:var(--error)}
+.success{color:var(--success)}
+.link{text-align:center;margin-top:18px;font-size:13px;color:var(--muted)}
+.link a{color:var(--primary);text-decoration:none;font-weight:600}
+.link a:hover{text-decoration:underline}
+.divider{height:1px;background:var(--border);margin:24px 0}
+</style>
 </head>
 <body>
-
-    <div class="login-container">
-        <h2>Smart Hostel Login</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" placeholder="student@university.com" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password" required>
-            </div>
-            <button type="submit" class="btn">Login</button>
-            <div id="message" class="message"></div>
-        </form>
-        <div class="link">
-            Don't have an account? <a href="register.html">Register here</a>
-        </div>
+<div class="card">
+  <div class="brand">
+    <div class="logo">SH</div>
+    <div>
+      <h2>Welcome back</h2>
+      <div class="subtitle">Smart Hostel • Sign in to continue</div>
     </div>
+  </div>
+  <form id="loginForm">
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="student@university.com" required autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <div class="input-wrap">
+        <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+        <button type="button" class="toggle" id="togglePass" aria-label="Show password">👁️</button>
+      </div>
+    </div>
+    <button type="submit" class="btn">Login</button>
+    <div id="message" class="message"></div>
+  </form>
+  <div class="link">Don't have an account? <a href="register.html">Register here</a></div>
+</div>
 
-    <script>
-        const API_URL = "https://hotel-management-system-pd7b.onrender.com";
+<script>
+const API_URL = "https://hotel-management-system-pd7b.onrender.com";
 
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const messageDiv = document.getElementById('message');
-            const submitBtn = document.querySelector('.btn');
+const toggle = document.getElementById('togglePass');
+const pwd = document.getElementById('password');
+toggle.addEventListener('click', ()=>{
+  const isPwd = pwd.type === 'password';
+  pwd.type = isPwd ? 'text' : 'password';
+  toggle.textContent = isPwd ? '🙈' : '👁️';
+});
 
-            messageDiv.textContent = "Connecting to API...";
-            messageDiv.className = "message";
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = "0.7";
-
-            try {
-                const response = await fetch(`${API_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // ✅ SAVE TO LOCALSTORAGE - THIS IS THE KEY PART!
-                    localStorage.setItem('token', data.access_token);
-                    localStorage.setItem('role', data.role);
-                    localStorage.setItem('userId', data.user_id);
-
-                    messageDiv.textContent = "Login successful! Redirecting...";
-                    messageDiv.className = "message success";
-
-                    // Redirect to dashboard after 1 second
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
-
-                } else {
-                    messageDiv.textContent = data.detail || "Login failed";
-                    messageDiv.className = "message error";
-                }
-
-            } catch (error) {
-                messageDiv.textContent = "Network error. Please try again.";
-                messageDiv.className = "message error";
-                console.error("Login Error:", error);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = "1";
-            }
-        });
-    </script>
+document.getElementById('loginForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const messageDiv = document.getElementById('message');
+  const submitBtn = document.querySelector('.btn');
+  messageDiv.textContent = "Connecting to API...";
+  messageDiv.className = "message";
+  submitBtn.disabled = true;
+  try{
+    const response = await fetch(`${API_URL}/auth/login`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password})
+    });
+    const data = await response.json();
+    if(response.ok){
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('role', data.role);
+      localStorage.setItem('userId', data.user_id);
+      messageDiv.textContent = "Login successful! Redirecting...";
+      messageDiv.className = "message success";
+      setTimeout(()=>{window.location.href='dashboard.html';},1000);
+    }else{
+      messageDiv.textContent = data.detail || "Login failed";
+      messageDiv.className = "message error";
+    }
+  }catch(err){
+    messageDiv.textContent = "Network error. Please try again.";
+    messageDiv.className = "message error";
+  }finally{
+    submitBtn.disabled = false;
+  }
+});
+</script>
 </body>
 </html>
